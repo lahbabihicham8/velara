@@ -1,0 +1,133 @@
+// NexaPay — PostgreSQL schema (Prisma)
+// Multi-tenant: every financial row is scoped to an Organization.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  owner
+  admin
+  treasurer
+  analyst
+  viewer
+}
+
+enum UserStatus {
+  active
+  invited
+  suspended
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+  SAR
+  AED
+  KWD
+  QAR
+}
+
+enum TxType {
+  incoming
+  outgoing
+  conversion
+  fee
+}
+
+enum TxStatus {
+  completed
+  pending
+  processing
+  failed
+}
+
+model Organization {
+  id           String        @id @default(cuid())
+  name         String
+  baseCurrency Currency      @default(USD)
+  createdAt    DateTime      @default(now())
+  users        User[]
+  wallets      Wallet[]
+  transactions Transaction[]
+}
+
+model User {
+  id           String       @id @default(cuid())
+  orgId        String
+  org          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  email        String       @unique
+  name         String
+  initials     String
+  passwordHash String
+  role         Role         @default(viewer)
+  status       UserStatus   @default(active)
+  twoFactor    Boolean      @default(false)
+  lastActiveAt DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  sessions     Session[]
+
+  @@index([orgId])
+}
+
+/// Opaque, revocable server-side sessions. The cookie holds the raw token;
+/// only its SHA-256 hash is persisted, so a DB leak can't be replayed.
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Wallet {
+  id        String       @id @default(cuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  currency  Currency
+  balance   Decimal      @db.Decimal(24, 4)
+  reserved  Decimal      @default(0) @db.Decimal(24, 4)
+  change24h Float        @default(0)
+  reference String
+  isPrimary Boolean      @default(false)
+  createdAt DateTime     @default(now())
+
+  @@unique([orgId, currency])
+  @@index([orgId])
+}
+
+model Transaction {
+  id                   String       @id @default(cuid())
+  orgId                String
+  org                  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  reference            String
+  type                 TxType
+  status               TxStatus
+  counterparty         String
+  counterpartyInitials String
+  amountCurrency       Currency
+  amountValue          Decimal      @db.Decimal(24, 4)
+  convertedCurrency    Currency?
+  convertedValue       Decimal?     @db.Decimal(24, 4)
+  rate                 Decimal?     @db.Decimal(20, 8)
+  fee                  Decimal      @default(0) @db.Decimal(24, 4)
+  category             String
+  countryFlag          String
+  createdAt            DateTime     @default(now())
+
+  @@index([orgId, createdAt])
+  @@index([orgId, type])
+  @@index([orgId, status])
+}
