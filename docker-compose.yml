@@ -1,21 +1,21 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: nexapay-postgres
+    container_name: velarapay-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: nexapay
-      POSTGRES_PASSWORD: nexapay
-      POSTGRES_DB: nexapay
+      POSTGRES_USER: velarapay
+      POSTGRES_PASSWORD: velarapay
+      POSTGRES_DB: velarapay
     ports:
       - "5432:5432"
     volumes:
-      - nexapay_pgdata:/var/lib/postgresql/data
+      - velarapay_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nexapay -d nexapay"]
+      test: ["CMD-SHELL", "pg_isready -U velarapay -d velarapay"]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
-  nexapay_pgdata:
+  velarapay_pgdata:

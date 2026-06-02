@@ -2,11 +2,12 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { attempt, type Result } from "@/lib/result";
 import { requirePermission } from "@/server/auth";
+import { activeOrgId } from "@/server/context";
 import { transactionFromRow } from "@/server/mappers";
 import type { Transaction } from "@/types";
 
 /**
- * Fetch the authenticated org's transaction ledger (newest first).
+ * Fetch the active org's transaction ledger (newest first).
  * Requires `transactions.view`.
  */
 export async function listTransactions(
@@ -14,8 +15,9 @@ export async function listTransactions(
 ): Promise<Result<Transaction[]>> {
   return attempt(async () => {
     const user = await requirePermission("transactions.view");
+    const orgId = await activeOrgId(user);
     const rows = await prisma.transaction.findMany({
-      where: { orgId: user.orgId },
+      where: { orgId },
       orderBy: { createdAt: "desc" },
       take: count,
     });

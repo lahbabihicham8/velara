@@ -9,8 +9,8 @@ const databaseDir = resolve(process.cwd(), ".pgdata");
 
 const pg = new EmbeddedPostgres({
   databaseDir,
-  user: "nexapay",
-  password: "nexapay",
+  user: "velarapay",
+  password: "velarapay",
   port: 5432,
   persistent: true,
 });
@@ -26,10 +26,10 @@ console.log("[pg-dev] starting postgres on :5432…");
 await pg.start();
 
 try {
-  await pg.createDatabase("nexapay");
-  console.log("[pg-dev] created database 'nexapay'");
+  await pg.createDatabase("velarapay");
+  console.log("[pg-dev] created database 'velarapay'");
 } catch {
-  console.log("[pg-dev] database 'nexapay' already exists");
+  console.log("[pg-dev] database 'velarapay' already exists");
 }
 
 console.log("[pg-dev] READY");

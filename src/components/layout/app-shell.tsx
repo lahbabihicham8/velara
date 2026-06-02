@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Bell, Menu, Search, X } from "lucide-react";
+import Link from "next/link";
+import { Bell, Menu, Search, ShieldCheck, X } from "lucide-react";
 import { Brand } from "@/components/layout/brand";
 import { NavLinks } from "@/components/layout/nav-links";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -26,6 +27,20 @@ function SidebarBody() {
           Workspace
         </p>
         <NavLinks />
+        {user.isSuperadmin && (
+          <div className="mt-4 border-t border-border pt-4">
+            <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Platform
+            </p>
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <ShieldCheck className="size-[18px] shrink-0" />
+              Back office
+            </Link>
+          </div>
+        )}
       </div>
       <div className="border-t border-border p-3">
         <div className="flex items-center gap-3 rounded-lg p-2">
@@ -52,7 +67,13 @@ function SidebarBody() {
  * Application chrome: fixed sidebar (desktop), slide-over drawer (mobile),
  * sticky topbar, live FX ticker and the scrollable content region.
  */
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  banner,
+}: {
+  children: ReactNode;
+  banner?: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const user = useSession();
 
@@ -95,6 +116,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       <div className="lg:pl-64">
+        {banner}
         {/* Topbar */}
         <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur-xl">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-6">

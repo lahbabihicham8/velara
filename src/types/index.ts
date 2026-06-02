@@ -60,6 +60,42 @@ export interface FxSeries {
 }
 
 /* ------------------------------------------------------------------ */
+/* Crypto                                                              */
+/* ------------------------------------------------------------------ */
+
+export const CRYPTO_CODES = ["BTC", "ETH", "USDT", "USDC"] as const;
+
+export type CryptoCode = (typeof CRYPTO_CODES)[number];
+
+export interface CryptoAssetMeta {
+  code: CryptoCode;
+  name: string;
+  /** Decimal places used when formatting holdings. */
+  decimals: number;
+  /** Brand colour for chips / accents. */
+  color: string;
+  /** Reference USD price (live feed oscillates around it). */
+  referencePriceUsd: number;
+  /** Annualised volatility, drives the simulated live price walk. */
+  volatility: number;
+  /** True for fiat-pegged stablecoins. */
+  stable: boolean;
+}
+
+export interface CryptoHolding {
+  id: string;
+  asset: CryptoCode;
+  /** Units held (e.g. 1.85 BTC). */
+  balance: number;
+  /** USD value at the current reference price. */
+  baseValue: number;
+  /** 24h change as a fraction (0.031 = +3.1%). */
+  change24h: number;
+  /** Masked custody address. */
+  address: string;
+}
+
+/* ------------------------------------------------------------------ */
 /* Wallets & Money                                                     */
 /* ------------------------------------------------------------------ */
 
@@ -122,6 +158,48 @@ export interface Transaction {
 }
 
 /* ------------------------------------------------------------------ */
+/* Beneficiaries                                                       */
+/* ------------------------------------------------------------------ */
+
+export interface Beneficiary {
+  id: string;
+  name: string;
+  nickname?: string;
+  bankName: string;
+  accountNumber: string;
+  iban?: string;
+  swift: string;
+  currency: CurrencyCode;
+  country: string;
+  countryFlag: string;
+  createdAt: number;
+}
+
+/* ------------------------------------------------------------------ */
+/* Bulk payments                                                       */
+/* ------------------------------------------------------------------ */
+
+export type BatchStatus = "draft" | "processing" | "completed" | "failed";
+
+/** A single parsed/validated row from a bulk payment CSV. */
+export interface BulkPaymentRow {
+  beneficiary: string;
+  currency: CurrencyCode;
+  amount: number;
+  reference: string;
+}
+
+export interface PaymentBatch {
+  id: string;
+  filename: string;
+  status: BatchStatus;
+  totalCount: number;
+  totalValue: number;
+  baseCurrency: CurrencyCode;
+  createdAt: number;
+}
+
+/* ------------------------------------------------------------------ */
 /* Analytics                                                           */
 /* ------------------------------------------------------------------ */
 
@@ -179,9 +257,13 @@ export type Permission =
   | "dashboard.view"
   | "wallets.view"
   | "wallets.convert"
+  | "crypto.view"
   | "transactions.view"
   | "transactions.create"
   | "transactions.approve"
+  | "beneficiaries.view"
+  | "beneficiaries.manage"
+  | "payments.bulk"
   | "analytics.view"
   | "team.view"
   | "team.manage"
@@ -215,4 +297,21 @@ export interface SessionUser {
   initials: string;
   company: string;
   status: "active" | "invited" | "suspended";
+  /** Platform back-office operator: bypasses org RBAC, can access /admin. */
+  isSuperadmin: boolean;
+  /** The active org's trading margin in basis points (50 = 0.50%). */
+  marginBps: number;
+}
+
+/** A client account as listed in the back office. */
+export interface AccountSummary {
+  id: string;
+  name: string;
+  baseCurrency: CurrencyCode;
+  marginBps: number;
+  userCount: number;
+  walletCount: number;
+  transactionCount: number;
+  totalBaseValue: number;
+  createdAt: number;
 }

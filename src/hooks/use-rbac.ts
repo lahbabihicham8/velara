@@ -15,9 +15,12 @@ export function useRbac() {
     () => ({
       role: user.role,
       definition: ROLE_DEFINITIONS[user.role],
-      can: (permission: Permission) => can(user.role, permission),
-      canAll: (permissions: Permission[]) => canAll(user.role, permissions),
+      isSuperadmin: user.isSuperadmin,
+      can: (permission: Permission) =>
+        user.isSuperadmin || can(user.role, permission),
+      canAll: (permissions: Permission[]) =>
+        user.isSuperadmin || canAll(user.role, permissions),
     }),
-    [user.role],
+    [user.role, user.isSuperadmin],
   );
 }

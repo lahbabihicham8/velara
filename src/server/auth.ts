@@ -97,6 +97,8 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
     initials: user.initials,
     company: user.org.name,
     status: user.status,
+    isSuperadmin: user.isSuperadmin,
+    marginBps: user.org.marginBps,
   };
 });
 
@@ -113,16 +115,29 @@ export async function requireUser(): Promise<SessionUser> {
 /**
  * Require an authenticated user that holds a specific permission.
  * Enforces RBAC at the data-access boundary (defence in depth).
+ * Platform superadmins bypass org-level permission checks.
  */
 export async function requirePermission(
   permission: Permission,
 ): Promise<SessionUser> {
   const user = await requireUser();
-  if (!can(user.role, permission)) {
+  if (!user.isSuperadmin && !can(user.role, permission)) {
     throw new AuthError(
       "FORBIDDEN",
       `Your role (${user.role}) lacks permission: ${permission}`,
     );
+  }
+  return user;
+}
+
+/**
+ * Require a platform-level back-office operator. Used to guard the /admin area
+ * and all cross-organisation services.
+ */
+export async function requireSuperadmin(): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!user.isSuperadmin) {
+    throw new AuthError("FORBIDDEN", "Back-office access required");
   }
   return user;
 }

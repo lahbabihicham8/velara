@@ -22,7 +22,7 @@ export default async function WalletsPage() {
     return <ErrorState title="Couldn't load wallets" message={view.error.message} />;
   }
 
-  const { wallets, totalBaseValue } = view.data;
+  const { wallets, totalBaseValue, marginBps } = view.data;
   const canConvert = convertAuth.ok && convertAuth.data.allowed;
 
   return (
@@ -67,7 +67,7 @@ export default async function WalletsPage() {
 
         <div className="xl:col-span-1">
           {canConvert ? (
-            <CurrencyConverter />
+            <CurrencyConverter marginBps={marginBps} />
           ) : (
             <ErrorState
               title="Conversion restricted"

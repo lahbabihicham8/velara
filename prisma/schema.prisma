@@ -33,6 +33,20 @@ enum Currency {
   QAR
 }
 
+enum CryptoAsset {
+  BTC
+  ETH
+  USDT
+  USDC
+}
+
+enum BatchStatus {
+  draft
+  processing
+  completed
+  failed
+}
+
 enum TxType {
   incoming
   outgoing
@@ -48,13 +62,19 @@ enum TxStatus {
 }
 
 model Organization {
-  id           String        @id @default(cuid())
+  id           String         @id @default(cuid())
   name         String
-  baseCurrency Currency      @default(USD)
-  createdAt    DateTime      @default(now())
+  baseCurrency Currency       @default(USD)
+  /// Trading margin (FX spread) applied to this client's conversions, in
+  /// basis points. 50 bps = 0.50%. Adjustable from the back office.
+  marginBps    Int            @default(50)
+  createdAt    DateTime       @default(now())
   users        User[]
   wallets      Wallet[]
+  cryptoWallets CryptoWallet[]
   transactions Transaction[]
+  beneficiaries Beneficiary[]
+  batches      PaymentBatch[]
 }
 
 model User {
@@ -66,6 +86,9 @@ model User {
   initials     String
   passwordHash String
   role         Role         @default(viewer)
+  /// Platform-level back-office operator. Bypasses org RBAC and can access
+  /// the /admin area to view every account and adjust client margins.
+  isSuperadmin Boolean      @default(false)
   status       UserStatus   @default(active)
   twoFactor    Boolean      @default(false)
   lastActiveAt DateTime     @default(now())
@@ -109,25 +132,83 @@ model Wallet {
 }
 
 model Transaction {
-  id                   String       @id @default(cuid())
+  id                   String        @id @default(cuid())
   orgId                String
-  org                  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  org                  Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   reference            String
   type                 TxType
   status               TxStatus
   counterparty         String
   counterpartyInitials String
   amountCurrency       Currency
-  amountValue          Decimal      @db.Decimal(24, 4)
+  amountValue          Decimal       @db.Decimal(24, 4)
   convertedCurrency    Currency?
-  convertedValue       Decimal?     @db.Decimal(24, 4)
-  rate                 Decimal?     @db.Decimal(20, 8)
-  fee                  Decimal      @default(0) @db.Decimal(24, 4)
+  convertedValue       Decimal?      @db.Decimal(24, 4)
+  rate                 Decimal?      @db.Decimal(20, 8)
+  fee                  Decimal       @default(0) @db.Decimal(24, 4)
   category             String
   countryFlag          String
-  createdAt            DateTime     @default(now())
+  beneficiaryId        String?
+  beneficiary          Beneficiary?  @relation(fields: [beneficiaryId], references: [id], onDelete: SetNull)
+  batchId              String?
+  batch                PaymentBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  createdAt            DateTime      @default(now())
 
   @@index([orgId, createdAt])
   @@index([orgId, type])
   @@index([orgId, status])
+  @@index([batchId])
+}
+
+/// A crypto holding (tracked balance + 24h change). Valued against a live
+/// USD price feed in the app; no on-chain custody.
+model CryptoWallet {
+  id        String       @id @default(cuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  asset     CryptoAsset
+  balance   Decimal      @db.Decimal(36, 8)
+  change24h Float        @default(0)
+  address   String
+  createdAt DateTime     @default(now())
+
+  @@unique([orgId, asset])
+  @@index([orgId])
+}
+
+/// A saved payee (bank details) a client pays out to.
+model Beneficiary {
+  id            String        @id @default(cuid())
+  orgId         String
+  org           Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  name          String
+  nickname      String?
+  bankName      String
+  accountNumber String
+  iban          String?
+  swift         String
+  currency      Currency
+  country       String
+  countryFlag   String
+  createdAt     DateTime      @default(now())
+  transactions  Transaction[]
+
+  @@index([orgId])
+}
+
+/// A bulk payment run created from a CSV upload.
+model PaymentBatch {
+  id           String        @id @default(cuid())
+  orgId        String
+  org          Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  filename     String
+  status       BatchStatus   @default(processing)
+  totalCount   Int
+  totalValue   Decimal       @db.Decimal(24, 4)
+  baseCurrency Currency      @default(USD)
+  createdAt    DateTime      @default(now())
+  createdBy    String
+  transactions Transaction[]
+
+  @@index([orgId, createdAt])
 }

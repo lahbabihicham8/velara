@@ -11,7 +11,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_001",
     name: "Layla Al-Rashid",
-    email: "layla@nexapay.io",
+    email: "layla@velarapay.io",
     role: "owner",
     initials: "LA",
     status: "active",
@@ -21,7 +21,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_002",
     name: "Marcus Bennett",
-    email: "marcus@nexapay.io",
+    email: "marcus@velarapay.io",
     role: "admin",
     initials: "MB",
     status: "active",
@@ -31,7 +31,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_003",
     name: "Sofia Romano",
-    email: "sofia@nexapay.io",
+    email: "sofia@velarapay.io",
     role: "treasurer",
     initials: "SR",
     status: "active",
@@ -41,7 +41,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_004",
     name: "Omar Haddad",
-    email: "omar@nexapay.io",
+    email: "omar@velarapay.io",
     role: "treasurer",
     initials: "OH",
     status: "active",
@@ -51,7 +51,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_005",
     name: "Yuki Tanaka",
-    email: "yuki@nexapay.io",
+    email: "yuki@velarapay.io",
     role: "analyst",
     initials: "YT",
     status: "active",
@@ -61,7 +61,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_006",
     name: "Priya Nair",
-    email: "priya@nexapay.io",
+    email: "priya@velarapay.io",
     role: "analyst",
     initials: "PN",
     status: "invited",
@@ -81,7 +81,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "usr_008",
     name: "Aisha Kareem",
-    email: "aisha@nexapay.io",
+    email: "aisha@velarapay.io",
     role: "viewer",
     initials: "AK",
     status: "suspended",

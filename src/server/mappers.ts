@@ -1,12 +1,25 @@
 import "server-only";
 import type {
+  Beneficiary as BeneficiaryRow,
+  CryptoWallet as CryptoRow,
+  PaymentBatch as BatchRow,
   Transaction as TxRow,
   User as UserRow,
   Wallet as WalletRow,
 } from "@prisma/client";
 import { toBase } from "@/lib/fx-engine";
+import { cryptoToUsd } from "@/lib/crypto";
 import { round } from "@/lib/utils";
-import type { CurrencyCode, TeamMember, Transaction, Wallet } from "@/types";
+import type {
+  Beneficiary,
+  CryptoCode,
+  CryptoHolding,
+  CurrencyCode,
+  PaymentBatch,
+  TeamMember,
+  Transaction,
+  Wallet,
+} from "@/types";
 
 /** Coerce a Prisma Decimal (or number) to a plain JS number. */
 export function toNum(value: unknown): number {
@@ -58,6 +71,50 @@ export function transactionFromRow(row: TxRow): Transaction {
   }
 
   return tx;
+}
+
+/** Map a crypto wallet row to a domain holding, valued in USD. */
+export function cryptoFromRow(row: CryptoRow): CryptoHolding {
+  const balance = toNum(row.balance);
+  const asset = row.asset as CryptoCode;
+  return {
+    id: row.id,
+    asset,
+    balance,
+    baseValue: round(cryptoToUsd(balance, asset), 2),
+    change24h: row.change24h,
+    address: row.address,
+  };
+}
+
+/** Map a beneficiary row to the domain model. */
+export function beneficiaryFromRow(row: BeneficiaryRow): Beneficiary {
+  return {
+    id: row.id,
+    name: row.name,
+    nickname: row.nickname ?? undefined,
+    bankName: row.bankName,
+    accountNumber: row.accountNumber,
+    iban: row.iban ?? undefined,
+    swift: row.swift,
+    currency: row.currency as CurrencyCode,
+    country: row.country,
+    countryFlag: row.countryFlag,
+    createdAt: row.createdAt.getTime(),
+  };
+}
+
+/** Map a payment batch row to the domain model. */
+export function batchFromRow(row: BatchRow): PaymentBatch {
+  return {
+    id: row.id,
+    filename: row.filename,
+    status: row.status,
+    totalCount: row.totalCount,
+    totalValue: toNum(row.totalValue),
+    baseCurrency: row.baseCurrency as CurrencyCode,
+    createdAt: row.createdAt.getTime(),
+  };
 }
 
 /** Map a user row to a team-member view model. */

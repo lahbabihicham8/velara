@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { attempt, type Result } from "@/lib/result";
 import { requirePermission } from "@/server/auth";
+import { activeOrgId } from "@/server/context";
 import { transactionFromRow, walletFromRow } from "@/server/mappers";
 import {
   deriveCashflow,
@@ -43,11 +44,12 @@ export interface DashboardSnapshot {
 export async function getDashboardSnapshot(): Promise<Result<DashboardSnapshot>> {
   return attempt(async () => {
     const user = await requirePermission("dashboard.view");
+    const orgId = await activeOrgId(user);
 
     const [walletRows, txRows] = await Promise.all([
-      prisma.wallet.findMany({ where: { orgId: user.orgId } }),
+      prisma.wallet.findMany({ where: { orgId } }),
       prisma.transaction.findMany({
-        where: { orgId: user.orgId },
+        where: { orgId },
         orderBy: { createdAt: "desc" },
         take: 800,
       }),

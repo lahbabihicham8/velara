@@ -141,17 +141,19 @@ npm run dev
 
 ### 🔐 Demo login
 
-All seeded users share the password from `SEED_PASSWORD` (default `NexaPay!2026`):
+All seeded users share the password from `SEED_PASSWORD` (default `VelaraPay!2026`):
 
-| Email                | Role      |
-| -------------------- | --------- |
-| layla@nexapay.io     | Owner     |
-| marcus@nexapay.io    | Admin     |
-| sofia@nexapay.io     | Treasurer |
-| yuki@nexapay.io      | Analyst   |
-| daniel@partner.io    | Viewer    |
+| Email                  | Role               |
+| ---------------------- | ------------------ |
+| layla@velarapay.io     | Owner              |
+| marcus@velarapay.io    | Admin              |
+| sofia@velarapay.io     | Treasurer          |
+| yuki@velarapay.io      | Analyst            |
+| daniel@partner.io      | Viewer             |
+| ops@velarapay.io       | Superadmin (back office) |
 
 Sign in as different users to see RBAC change the navigation and lock down pages.
+The superadmin (`ops@velarapay.io`) can access the back office at `/admin`.
 
 ### 📜 Scripts
 

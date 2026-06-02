@@ -27,7 +27,7 @@ export async function authorize(
     const user = await getCurrentUser();
     if (!user) return { allowed: false, role: null };
     return {
-      allowed: can(user.role, permission),
+      allowed: user.isSuperadmin || can(user.role, permission),
       role: ROLE_DEFINITIONS[user.role],
     };
   }, "AUTHORIZE_FAILED");

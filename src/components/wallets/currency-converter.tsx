@@ -11,20 +11,30 @@ import { Badge } from "@/components/ui/badge";
 import { useFxStream, useLiveRate } from "@/hooks/use-fx-stream";
 import { CURRENCIES, CURRENCY_LIST } from "@/lib/currencies";
 import { formatMoney, formatRate } from "@/lib/format";
+import { applyMargin, formatMargin, DEFAULT_MARGIN_BPS } from "@/lib/margin";
 import { round } from "@/lib/utils";
 import type { CurrencyCode } from "@/types";
 
 /**
  * Instant multi-currency converter powered by the live FX stream.
- * The output amount and rate re-compute on every tick.
+ * The output amount and rate re-compute on every tick, with the client's
+ * configured trading margin applied on top of the mid-market rate.
  */
-export function CurrencyConverter() {
+export function CurrencyConverter({
+  marginBps = DEFAULT_MARGIN_BPS,
+}: {
+  marginBps?: number;
+}) {
   const [amount, setAmount] = useState("10000");
   const [from, setFrom] = useState<CurrencyCode>("USD");
   const [to, setTo] = useState<CurrencyCode>("EUR");
 
   const { running } = useFxStream();
-  const rate = useLiveRate(from, to);
+  const midRate = useLiveRate(from, to);
+  const rate = useMemo(
+    () => applyMargin(midRate, marginBps),
+    [midRate, marginBps],
+  );
 
   const parsed = Number.parseFloat(amount) || 0;
   const result = useMemo(
@@ -125,11 +135,21 @@ export function CurrencyConverter() {
           </div>
         </div>
 
-        {/* Rate + fee summary */}
+        {/* Rate + margin + fee summary */}
         <dl className="space-y-1.5 rounded-lg bg-muted/40 p-3 text-xs">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Exchange rate</dt>
+            <dt className="text-muted-foreground">Mid-market rate</dt>
             <dd className="font-semibold tnum">
+              1 {from} = {formatRate(midRate)} {to}
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Trading margin</dt>
+            <dd className="font-semibold tnum">{formatMargin(marginBps)}</dd>
+          </div>
+          <div className="flex justify-between border-t border-border pt-1.5">
+            <dt className="text-muted-foreground">Your rate</dt>
+            <dd className="font-semibold tnum text-primary">
               1 {from} = {formatRate(rate)} {to}
             </dd>
           </div>
