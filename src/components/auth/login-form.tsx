@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { AlertCircle, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2, Lock, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { loginAction, type LoginState } from "@/server/actions/auth-actions";
@@ -30,17 +30,17 @@ export function LoginForm() {
 
       <div className="space-y-1.5">
         <label htmlFor="email" className="text-sm font-medium">
-          Work email
+          Username or email
         </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <UserRound className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             id="email"
             name="email"
-            type="email"
-            autoComplete="email"
+            type="text"
+            autoComplete="username"
             required
-            placeholder="you@company.com"
+            placeholder="joe"
             className={cn(
               "h-11 w-full rounded-lg border bg-card pl-9 pr-3 text-sm outline-none transition-colors focus:ring-2 focus:ring-ring",
               state.fieldErrors?.email ? "border-negative" : "border-input",

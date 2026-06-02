@@ -3,7 +3,7 @@ import type { CryptoAssetMeta, CryptoCode } from "@/types";
 /**
  * Crypto asset registry. Prices are reference USD spot prices; the live feed
  * (`useCryptoPrices`) oscillates around them. No on-chain custody — balances
- * are tracked, consistent with the platform's demo data architecture.
+ * are tracked consistently with the platform's seeded data architecture.
  */
 export const CRYPTO_ASSETS: Record<CryptoCode, CryptoAssetMeta> = {
   BTC: {

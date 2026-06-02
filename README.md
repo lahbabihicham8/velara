@@ -135,25 +135,25 @@ npm run dev              # http://localhost:3000
 ```bash
 docker compose up -d     # or set DATABASE_URL to a Neon/Supabase URL
 npm run db:migrate       # create/apply the schema
-npm run db:seed          # load demo org, users, wallets, 520 transactions
+npm run db:seed          # load seeded org, users, wallets, 520 transactions
 npm run dev
 ```
 
-### 🔐 Demo login
+### 🔐 Handover Login
 
-All seeded users share the password from `SEED_PASSWORD` (default `VelaraPay!2026`):
+All seeded users share the password from `SEED_PASSWORD` (default `velara2026`):
 
-| Email                  | Role               |
-| ---------------------- | ------------------ |
-| layla@velarapay.io     | Owner              |
-| marcus@velarapay.io    | Admin              |
-| sofia@velarapay.io     | Treasurer          |
-| yuki@velarapay.io      | Analyst            |
-| daniel@partner.io      | Viewer             |
-| ops@velarapay.io       | Superadmin (back office) |
+| Login                  | Role                       |
+| ---------------------- | -------------------------- |
+| joe                    | Client owner               |
+| admin                  | Superadmin (back office)   |
+| marcus                 | Admin                      |
+| sofia                  | Treasurer                  |
+| yuki                   | Analyst                    |
+| daniel                 | Viewer                     |
 
 Sign in as different users to see RBAC change the navigation and lock down pages.
-The superadmin (`ops@velarapay.io`) can access the back office at `/admin`.
+The superadmin (`admin`) can access the back office at `/admin`.
 
 ### 📜 Scripts
 
@@ -191,7 +191,7 @@ straight into EasyPanel:
 4. **Start command:** `npm run start:prod`
    This runs `prisma migrate deploy` (applies migrations safely — never resets
    data) and then `next start`. `DATABASE_URL` must be set at this point.
-5. **First deploy only:** run `npm run db:seed` once if you want demo data
+5. **First deploy only:** run `npm run db:seed` once if you want seeded starter data
    (skip for a clean production tenant).
 
 > The runtime is pinned via `.nvmrc` (Node 22) and the `engines` field

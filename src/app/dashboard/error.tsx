@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
@@ -15,11 +14,6 @@ export default function DashboardError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    // In production this would report to Sentry / observability.
-    console.error("Dashboard route error:", error);
-  }, [error]);
-
   return (
     <div className="py-10">
       <ErrorState

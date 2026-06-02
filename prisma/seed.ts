@@ -12,12 +12,13 @@ import type { Role } from "@/types";
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
-const SEED_PASSWORD = process.env.SEED_PASSWORD ?? "VelaraPay!2026";
+const SEED_PASSWORD = process.env.SEED_PASSWORD ?? "velara2026";
 const SALT_ROUNDS = Number.parseInt(process.env.PASSWORD_SALT_ROUNDS ?? "12", 10);
 
 interface SecondaryUser {
   name: string;
   email: string;
+  username?: string;
   initials: string;
   role: Role;
 }
@@ -50,9 +51,9 @@ const ORG_SEEDS: OrgSeed[] = [
     txCount: 260,
     txSeed: 7714002,
     users: [
-      { name: "James Whitfield", email: "james@cedarco.example", initials: "JW", role: "owner" },
-      { name: "Elena Popova", email: "elena@cedarco.example", initials: "EP", role: "treasurer" },
-      { name: "Hassan Ali", email: "hassan@cedarco.example", initials: "HA", role: "analyst" },
+      { name: "James Whitfield", email: "james@cedarco.example", username: "james", initials: "JW", role: "owner" },
+      { name: "Elena Popova", email: "elena@cedarco.example", username: "elena", initials: "EP", role: "treasurer" },
+      { name: "Hassan Ali", email: "hassan@cedarco.example", username: "hassan", initials: "HA", role: "analyst" },
     ],
   },
   {
@@ -62,9 +63,9 @@ const ORG_SEEDS: OrgSeed[] = [
     txCount: 340,
     txSeed: 5521098,
     users: [
-      { name: "Sophie Laurent", email: "sophie@halcyon.example", initials: "SL", role: "owner" },
-      { name: "Diego Fernández", email: "diego@halcyon.example", initials: "DF", role: "admin" },
-      { name: "Mei Chen", email: "mei@halcyon.example", initials: "MC", role: "treasurer" },
+      { name: "Sophie Laurent", email: "sophie@halcyon.example", username: "sophie", initials: "SL", role: "owner" },
+      { name: "Diego Fernández", email: "diego@halcyon.example", username: "diego", initials: "DF", role: "admin" },
+      { name: "Mei Chen", email: "mei@halcyon.example", username: "mei", initials: "MC", role: "treasurer" },
     ],
   },
 ];
@@ -96,9 +97,10 @@ async function main() {
     // Users
     if (seed.primary) {
       await prisma.user.createMany({
-        data: TEAM_MEMBERS.map((m) => ({
+        data: TEAM_MEMBERS.map((m, index) => ({
           orgId: org.id,
           email: m.email,
+          username: index === 0 ? "joe" : m.email.split("@")[0],
           name: m.name,
           initials: m.initials,
           passwordHash,
@@ -113,6 +115,7 @@ async function main() {
         data: seed.users.map((u) => ({
           orgId: org.id,
           email: u.email,
+          username: u.username ?? u.email.split("@")[0],
           name: u.name,
           initials: u.initials,
           passwordHash,
@@ -194,6 +197,7 @@ async function main() {
     data: {
       orgId: primaryOrgId,
       email: "ops@velarapay.io",
+      username: "admin",
       name: "VelaraPay Ops",
       initials: "VO",
       passwordHash,
@@ -206,10 +210,10 @@ async function main() {
 
   console.log("\n✅ Seed complete.");
   console.log("──────────────────────────────────────────");
-  console.log("  Demo logins (all share this password):");
+  console.log("  Handover logins (all share this password):");
   console.log(`  Password:   ${SEED_PASSWORD}`);
-  console.log(`  Client:     ${TEAM_MEMBERS[0].email}  (Owner · Meridian)`);
-  console.log("  Back office: ops@velarapay.io  (Superadmin)");
+  console.log("  Client:     joe  (Owner · Meridian)");
+  console.log("  Back office: admin  (Superadmin)");
   console.log("──────────────────────────────────────────");
 }
 

@@ -6,7 +6,11 @@ import { MAX_MARGIN_BPS, MIN_MARGIN_BPS } from "@/lib/margin";
  * Login form validation schema (shared by the server action).
  */
 export const loginSchema = z.object({
-  email: z.email("Enter a valid email address.").max(254),
+  email: z
+    .string()
+    .trim()
+    .min(2, "Enter your username or email.")
+    .max(254),
   password: z.string().min(1, "Password is required.").max(200),
 });
 

@@ -30,8 +30,11 @@ export async function loginAction(
   }
 
   const { email, password } = parsed.data;
-  const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase().trim() },
+  const identifier = email.toLowerCase().trim();
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: identifier }, { username: identifier }],
+    },
   });
 
   // Always run a comparison-shaped path; respond generically on failure.
@@ -48,7 +51,7 @@ export async function loginAction(
   });
 
   await createSession(user.id);
-  redirect("/dashboard");
+  redirect(user.isSuperadmin ? "/admin" : "/dashboard");
 }
 
 /**
