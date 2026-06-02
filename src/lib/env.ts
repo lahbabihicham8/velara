@@ -2,7 +2,12 @@ import "server-only";
 
 /**
  * Centralised, validated access to server environment variables.
- * Throws early (at import time) if a required variable is missing.
+ *
+ * Values are exposed via getters so validation happens lazily on first access
+ * (i.e. at request time) rather than at module-import time. This is critical
+ * for build environments such as Nixpacks/EasyPanel where `next build` runs
+ * without runtime secrets like `DATABASE_URL` being injected — a top-level
+ * `throw` would otherwise fail the production build.
  */
 function required(name: string): string {
   const value = process.env[name];
@@ -20,8 +25,16 @@ function int(name: string, fallback: number): number {
 }
 
 export const env = {
-  DATABASE_URL: required("DATABASE_URL"),
-  SESSION_TTL_DAYS: int("SESSION_TTL_DAYS", 7),
-  PASSWORD_SALT_ROUNDS: int("PASSWORD_SALT_ROUNDS", 12),
-  IS_PRODUCTION: process.env.NODE_ENV === "production",
+  get DATABASE_URL(): string {
+    return required("DATABASE_URL");
+  },
+  get SESSION_TTL_DAYS(): number {
+    return int("SESSION_TTL_DAYS", 7);
+  },
+  get PASSWORD_SALT_ROUNDS(): number {
+    return int("PASSWORD_SALT_ROUNDS", 12);
+  },
+  get IS_PRODUCTION(): boolean {
+    return process.env.NODE_ENV === "production";
+  },
 } as const;

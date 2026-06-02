@@ -13,7 +13,7 @@ const SEED_PASSWORD = process.env.SEED_PASSWORD ?? "NexaPay!2026";
 const SALT_ROUNDS = Number.parseInt(process.env.PASSWORD_SALT_ROUNDS ?? "12", 10);
 
 async function main() {
-  console.log("🌱 Seeding NexaPay database…");
+  console.log("🌱 Seeding VelaraPay database…");
 
   // Idempotent reset (respects FK order via cascades, but explicit is safer).
   await prisma.session.deleteMany();

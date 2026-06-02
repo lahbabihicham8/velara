@@ -1,5 +1,5 @@
 /**
- * NexaPay — Core domain models.
+ * VelaraPay — Core domain models.
  * Every entity is strictly typed and shared across services, hooks and UI.
  */
 

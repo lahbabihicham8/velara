@@ -4,7 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * NexaPay Design System — 2026
+ * VelaraPay Design System — 2026
  * Token-driven theming. Light + Dark are first-class.
  * Colors authored in OKLCH for perceptual uniformity.
  */

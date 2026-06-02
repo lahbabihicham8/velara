@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * NexaPay wordmark + glyph. The glyph is a stylised "N" inside a
+ * VelaraPay wordmark + glyph. The glyph is a stylised "V" inside a
  * gradient rounded square.
  */
 export function Brand({
@@ -22,7 +22,7 @@ export function Brand({
           aria-hidden
         >
           <path
-            d="M5 19V5l14 14V5"
+            d="M5 5l7 14 7-14"
             stroke="white"
             strokeWidth="2.4"
             strokeLinecap="round"
@@ -32,7 +32,7 @@ export function Brand({
       </span>
       {!collapsed && (
         <span className="text-lg font-bold tracking-tight">
-          Nexa<span className="text-primary">Pay</span>
+          Velara<span className="text-primary">Pay</span>
         </span>
       )}
     </div>

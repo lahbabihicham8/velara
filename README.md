@@ -1,9 +1,9 @@
-# NexaPay — Global Treasury & FX Platform
+# VelaraPay — Global Treasury & FX Platform
 
 > منصة إدارة مدفوعات وتحويل عملات للشركات — بنية برمجية متكاملة بأحدث تقنيات 2026.
 > Enterprise multi-currency wallets, real-time FX streaming, and treasury analytics.
 
-NexaPay is a production-grade reference architecture for a corporate payments &
+VelaraPay is a production-grade reference architecture for a corporate payments &
 currency-conversion platform: multi-currency wallets, an instant FX converter
 backed by a live streaming rate engine, smart analytics (cash flow + FX
 Value-at-Risk), and Role-Based Access Control.
@@ -182,10 +182,18 @@ straight into EasyPanel:
    - `SESSION_TTL_DAYS`, `PASSWORD_SALT_ROUNDS` (optional)
    - Remove `SEED_PASSWORD` (or seed once then delete it).
 3. **Build command:** `npm install && npm run build`
-4. **Release/start command:** `npm run db:deploy && npm run start`
-   (`db:deploy` applies migrations safely — it never resets data.)
+   The build runs `prisma generate` then `next build`. It **does not require
+   `DATABASE_URL`** and never connects to the database — env vars are read
+   lazily at request time — so the Nixpacks build phase succeeds even before
+   the database is reachable.
+4. **Start command:** `npm run start:prod`
+   This runs `prisma migrate deploy` (applies migrations safely — never resets
+   data) and then `next start`. `DATABASE_URL` must be set at this point.
 5. **First deploy only:** run `npm run db:seed` once if you want demo data
    (skip for a clean production tenant).
+
+> The runtime is pinned via `.nvmrc` (Node 22) and the `engines` field
+> (`node >=20.9.0`), so Nixpacks selects a compatible Node version.
 
 Because development and production both use PostgreSQL, there are **no dialect
 surprises** — what you test locally is exactly what runs in production.
@@ -200,8 +208,10 @@ surprises** — what you test locally is exactly what runs in production.
 | Analyst    | Read-only analytics, balances & reports                   |
 | Viewer     | Limited dashboard visibility                              |
 
-Change the active demo user in `src/data/session.ts` (`role`) to see RBAC gating
-live — e.g. set `analyst` and the converter, team and settings pages lock down.
+Roles come from the authenticated user's database record. Sign in as the
+seeded users of different roles (or change a user's `role` in the database) to
+see RBAC gating live — e.g. an `analyst` sees the converter, team and settings
+pages lock down.
 
 ## 🗄️ Data layer
 

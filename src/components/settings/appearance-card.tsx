@@ -31,7 +31,7 @@ export function AppearanceCard() {
         <CardTitle className="flex items-center gap-2">
           <Palette className="size-4 text-chart-3" /> Appearance
         </CardTitle>
-        <CardDescription>Personalise how NexaPay looks.</CardDescription>
+        <CardDescription>Personalise how VelaraPay looks.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-2">

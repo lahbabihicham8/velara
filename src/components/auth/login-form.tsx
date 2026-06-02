@@ -40,7 +40,6 @@ export function LoginForm() {
             type="email"
             autoComplete="email"
             required
-            defaultValue="layla@nexapay.io"
             placeholder="you@company.com"
             className={cn(
               "h-11 w-full rounded-lg border bg-card pl-9 pr-3 text-sm outline-none transition-colors focus:ring-2 focus:ring-ring",
@@ -74,7 +73,6 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
-            defaultValue="NexaPay!2026"
             placeholder="••••••••"
             className={cn(
               "h-11 w-full rounded-lg border bg-card pl-9 pr-10 text-sm outline-none transition-colors focus:ring-2 focus:ring-ring",

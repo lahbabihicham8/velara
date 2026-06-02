@@ -15,12 +15,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "NexaPay — Global Treasury & FX Platform",
-    template: "%s · NexaPay",
+    default: "VelaraPay — Global Treasury & FX Platform",
+    template: "%s · VelaraPay",
   },
   description:
     "Enterprise multi-currency wallets, real-time FX, and treasury analytics for modern companies.",
-  applicationName: "NexaPay",
+  applicationName: "VelaraPay",
   keywords: ["fintech", "treasury", "multi-currency", "FX", "payments"],
 };
 

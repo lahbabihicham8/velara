@@ -1,4 +1,4 @@
-// NexaPay — PostgreSQL schema (Prisma)
+// VelaraPay — PostgreSQL schema (Prisma)
 // Multi-tenant: every financial row is scoped to an Organization.
 
 generator client {

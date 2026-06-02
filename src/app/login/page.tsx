@@ -49,7 +49,7 @@ export default async function LoginPage() {
           </ul>
         </div>
         <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} NexaPay · Meridian Holdings
+          © {new Date().getFullYear()} VelaraPay · Meridian Holdings
         </p>
       </section>
 
@@ -67,14 +67,6 @@ export default async function LoginPage() {
           </div>
 
           <LoginForm />
-
-          <div className="mt-6 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
-            <p className="font-medium text-foreground">Demo credentials</p>
-            <p className="mt-1 font-mono">layla@nexapay.io · NexaPay!2026</p>
-            <p className="mt-1">
-              Try other roles: marcus@ (admin), sofia@ (treasurer), yuki@ (analyst).
-            </p>
-          </div>
         </div>
       </section>
     </main>
